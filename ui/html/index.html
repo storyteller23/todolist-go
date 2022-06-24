@@ -11,11 +11,82 @@
 <body>
     <div class="container">
         <h1>TODO-LIST</h1>
-        <form action="/add" method="post">
-            <input type="text" name="title" required="required">
-            <input type="submit">
-            {{ .Todos }}
+        <h3>created by storyteller23</h3>
+        <form action="/add" method="post" class="form-group">
+            <input class="form-control form-control-lg" type="text" name="title" required="required" placeholder="Title">
+            <input type="submit" class="btn btn-primary" value="Add">
+            
         </form>
+        
+        
+        <h4>Uncompleted tasks:</h4>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Title</th>
+                <th scope="col">Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+                {{ range .}}
+                {{ if not .Completed }}
+              <tr>
+                <th scope="row">Date</th>
+                <td>{{ .Title }}</td>           
+
+                <td>
+                    <form action="/complete/{{ .Id }}" method="get">
+                        <input class="btn btn-success" type="submit" value="Complete">
+                    </form>
+                    <form action="/update/{{ .Id }}" method="get">
+                        <input class="btn btn-warning" type="submit" value="Edit">
+                    </form>
+                    <form action="/delete/{{ .Id }}" method="get">
+                        <input class="btn btn-danger" type="submit" value="Delete">
+                    </form>
+                </td>
+              </tr>
+              {{ end }}
+              {{ end }}
+            </tbody>
+          </table>
+
+          <br><br>
+          <h4>Completed tasks:</h4>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Title</th>
+                <th scope="col">Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+                {{ range .}}
+                {{ if .Completed }}
+              <tr>
+                <th scope="row">Date</th>
+                <td>{{ .Title }}</td>
+                
+
+                <td>
+                    <form action="/complete/{{ .Id }}" method="get">
+                        <input class="btn btn-success" type="submit" value="Complete">
+                    </form>
+                    <form action="/update/{{ .Id }}" method="get">
+                        <input class="btn btn-warning" type="submit" value="Edit">
+                    </form>
+                    <form action="/delete/{{ .Id }}" method="get">
+                        <input class="btn btn-danger" type="submit" value="Delete">
+                    </form>
+                </td>
+              </tr>
+              {{ end }}
+
+              {{ end }}
+            </tbody>
+          </table>
     </div>
 </body>
 </html>

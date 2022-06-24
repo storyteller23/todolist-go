@@ -5,7 +5,3 @@ type Todo struct {
 	Title     string
 	Completed int
 }
-
-type TodoList struct {
-	Todos []Todo
-}

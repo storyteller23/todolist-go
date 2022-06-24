@@ -16,33 +16,52 @@ func CreateTable(db *sql.DB) error {
 	);
 	`
 	_, err := db.Exec(sql_table)
-	if err != nil {
-		return err
-	}
-	return nil
+	return checkErr(err)
 }
 
-func Add(title string, db *sql.DB) {
-	db.Exec(`
+func Add(title string, db *sql.DB) error {
+	_, err := db.Exec(`
 	INSERT INTO todos (title, completed)
 	VALUES(?, 0)
 	`, title)
+	return checkErr(err)
 }
 
-func GetTodoList(db *sql.DB) (models.TodoList, error) {
+func Delete(id string, db *sql.DB) error {
+	_, err := db.Exec(`
+	DELETE FROM todos WHERE id = ?
+	`, id)
+	return checkErr(err)
+}
+
+func GetTodoList(db *sql.DB) ([]models.Todo, error) {
+	result := make([]models.Todo, 0)
+
 	rows, err := db.Query(`SELECT * FROM todos`)
 	if err != nil {
-		return models.TodoList{}, err
+		return result, err
 	}
-	result := make([]models.Todo, 0)
+	var id, completed int
+	var title string
 	for rows.Next() {
-		todo := models.Todo{}
-		err = rows.Scan(&todo.Id, &todo.Title, &todo.Completed)
+		err = rows.Scan(&id, &title, &completed)
 		if err != nil {
-			return models.TodoList{}, err
+			return []models.Todo{}, err
+		}
+		todo := models.Todo{
+			Id:        id,
+			Title:     title,
+			Completed: completed,
 		}
 		result = append(result, todo)
 	}
 
-	return models.TodoList{Todos: result}, nil
+	return result, nil
+}
+
+func checkErr(err error) error {
+	if err != nil {
+		return err
+	}
+	return nil
 }

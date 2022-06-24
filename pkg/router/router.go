@@ -9,5 +9,6 @@ func Init() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/", handlers.HomePage)
 	router.HandleFunc("/add", handlers.AddTodo)
+	router.HandleFunc("/delete/{id:[0-9]+}", handlers.DeleteTodo)
 	return router
 }
