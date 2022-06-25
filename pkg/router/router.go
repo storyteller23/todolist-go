@@ -11,5 +11,6 @@ func Init() *mux.Router {
 	router.HandleFunc("/add", handlers.AddTodo)
 	router.HandleFunc("/delete/{id:[0-9]+}", handlers.DeleteTodo)
 	router.HandleFunc("/complete/{id:[0-9]+}", handlers.CompleteTodo)
+	router.HandleFunc("/update/{id:[0-9]+}", handlers.UpdateTodo)
 	return router
 }

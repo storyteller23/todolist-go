@@ -34,6 +34,16 @@ func Delete(id string, db *sql.DB) error {
 	return checkErr(err)
 }
 
+func Update(id string, newTitle string, db *sql.DB) error {
+	_, err := db.Exec(`
+	UPDATE todos
+	SET title = ?
+	WHERE id = ?;
+	`, newTitle, id)
+
+	return checkErr(err)
+}
+
 func CompleteTask(id string, db *sql.DB) error {
 	_, err := db.Exec(`
 	UPDATE todos

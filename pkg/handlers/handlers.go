@@ -11,8 +11,9 @@ import (
 )
 
 var (
-	tmpl = template.Must(template.ParseFiles("ui/html/index.html"))
-	db   = config.Database()
+	index      = template.Must(template.ParseFiles("ui/html/index.html"))
+	updatePage = template.Must(template.ParseFiles("ui/html/update.html"))
+	db         = config.Database()
 )
 
 func HomePage(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +48,7 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 		UncompletedTasks: uncompleted,
 	}
 
-	tmpl.Execute(w, data)
+	index.Execute(w, data)
 }
 
 func AddTodo(w http.ResponseWriter, r *http.Request) {
@@ -65,6 +66,31 @@ func AddTodo(w http.ResponseWriter, r *http.Request) {
 
 	controller.Add(title[0], db)
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
+
+func UpdateTodo(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	params := mux.Vars(r)
+	id := params["id"]
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		newTitle, ok := r.Form["newTitle"]
+		if !ok {
+			http.Error(w, "Bad request", http.StatusBadRequest)
+			return
+		}
+		err := controller.Update(id, newTitle[0], db)
+		if err != nil {
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/", http.StatusMovedPermanently)
+	}
+
+	updatePage.Execute(w, id)
 }
 
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {
