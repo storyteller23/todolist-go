@@ -11,14 +11,8 @@
     <div class="container">
         <h1>TODO-LIST</h1>
         <h3>created by storyteller23</h3>
-        <form action="/add" method="post" class="form-group">
-            <input class="form-control form-control-lg" type="text" name="title" required="required" placeholder="Title">
-            <input type="submit" class="btn btn-primary" value="Add">
-            
-        </form>
-        <br><br>
-        <a href="/completed" class="btn btn-success">Completed Tasks</a>
-        <h4 >Uncompleted tasks</h4>
+        <a href="/" class="btn btn-primary">Home</a>
+        <h4 >Completed tasks</h4>
         <table class="table">
           <thead>
             <tr>
@@ -28,17 +22,11 @@
             </tr>
           </thead>
           <tbody>
-            {{ range .UncompletedTasks }}
+            {{ range .CompletedTasks }}
             <tr>
               <th scope="row">{{ .Id }}</th>
               <td>{{ .Title }}</td>
               <td>
-                <form action="/complete/{{ .Id }}" method="post">
-                  <input type="submit" value="Complete" class="btn btn-success">
-                </form>
-                <form action="/update/{{ .Id }}" method="get">
-                  <input type="submit" value="Update" class="btn btn-warning">
-                </form>
                 <form action="/delete/{{ .Id }}" method="post">
                   <input type="submit" value="Delete" class="btn btn-danger">
                 </form>
@@ -48,7 +36,6 @@
             {{ end }}
           </tbody>
         </table>
-        <br><br>
     </div>
 </body>
 </html>

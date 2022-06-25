@@ -11,9 +11,10 @@ import (
 )
 
 var (
-	index      = template.Must(template.ParseFiles("ui/html/index.html"))
-	updatePage = template.Must(template.ParseFiles("ui/html/update.html"))
-	db         = config.Database()
+	index         = template.Must(template.ParseFiles("ui/html/index.html"))
+	updatePage    = template.Must(template.ParseFiles("ui/html/update.html"))
+	completedPage = template.Must(template.ParseFiles("ui/html/completed.html"))
+	db            = config.Database()
 )
 
 func HomePage(w http.ResponseWriter, r *http.Request) {
@@ -37,14 +38,8 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	completed, err := controller.GetCompletedTasks(db)
-	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-		return
-	}
-
 	data := models.TodoList{
-		CompletedTasks:   completed,
+		CompletedTasks:   nil,
 		UncompletedTasks: uncompleted,
 	}
 
@@ -113,4 +108,23 @@ func CompleteTodo(w http.ResponseWriter, r *http.Request) {
 	id := params["id"]
 	controller.CompleteTask(id, db)
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
+
+func CompletedTasks(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	completed, err := controller.GetCompletedTasks(db)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.TodoList{
+		CompletedTasks:   completed,
+		UncompletedTasks: nil,
+	}
+
+	completedPage.Execute(w, data)
 }
