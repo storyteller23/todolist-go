@@ -5,3 +5,8 @@ type Todo struct {
 	Title     string
 	Completed int
 }
+
+type TodoList struct {
+	UncompletedTasks []Todo
+	CompletedTasks   []Todo
+}

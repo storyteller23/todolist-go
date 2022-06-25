@@ -17,76 +17,60 @@
             <input type="submit" class="btn btn-primary" value="Add">
             
         </form>
-        
-        
-        <h4>Uncompleted tasks:</h4>
+        <br><br>
+        <h4 >Uncompleted tasks</h4>
         <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Title</th>
-                <th scope="col">Edit</th>
-              </tr>
-            </thead>
-            <tbody>
-                {{ range .}}
-                {{ if not .Completed }}
-              <tr>
-                <th scope="row">Date</th>
-                <td>{{ .Title }}</td>           
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Title</th>
+              <th scope="col">Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .UncompletedTasks }}
+            <tr>
+              <th scope="row">Date</th>
+              <td>{{ .Title }}</td>
+              <td>
+                <form action="/complete/{{ .Id }}" method="post">
+                  <input type="submit" value="Complete" class="btn btn-success">
+                </form>
+                <form action="/delete/{{ .Id }}" method="post">
+                  <input type="submit" value="Delete" class="btn btn-danger">
+                </form>
 
-                <td>
-                    <form action="/complete/{{ .Id }}" method="get">
-                        <input class="btn btn-success" type="submit" value="Complete">
-                    </form>
-                    <form action="/update/{{ .Id }}" method="get">
-                        <input class="btn btn-warning" type="submit" value="Edit">
-                    </form>
-                    <form action="/delete/{{ .Id }}" method="get">
-                        <input class="btn btn-danger" type="submit" value="Delete">
-                    </form>
-                </td>
-              </tr>
-              {{ end }}
-              {{ end }}
-            </tbody>
-          </table>
+              </td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+        <br><br>
 
-          <br><br>
-          <h4>Completed tasks:</h4>
+        <h4 >Completed tasks</h4>
         <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Title</th>
-                <th scope="col">Edit</th>
-              </tr>
-            </thead>
-            <tbody>
-                {{ range .}}
-                {{ if .Completed }}
-              <tr>
-                <th scope="row">Date</th>
-                <td>{{ .Title }}</td>
-                
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Title</th>
+              <th scope="col">Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .CompletedTasks }}
+            <tr>
+              <th scope="row">Date</th>
+              <td>{{ .Title }}</td>
+              <td>
+                <form action="/delete/{{ .Id }}" method="post">
+                  <input type="submit" value="Delete" class="btn btn-danger">
+                </form>
 
-                <td>
-                    <form action="/complete/{{ .Id }}" method="get">
-                        <input class="btn btn-success" type="submit" value="Complete">
-                    </form>
-                    <form action="/update/{{ .Id }}" method="get">
-                        <input class="btn btn-warning" type="submit" value="Edit">
-                    </form>
-                    <form action="/delete/{{ .Id }}" method="get">
-                        <input class="btn btn-danger" type="submit" value="Delete">
-                    </form>
-                </td>
-              </tr>
-              {{ end }}
-
-              {{ end }}
-            </tbody>
-          </table>
+              </td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
     </div>
 </body>
 </html>

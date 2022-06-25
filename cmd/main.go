@@ -21,6 +21,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	controller.GetTodoList(db)
+
 	http.ListenAndServe(":"+conf.Port, router.Init())
 }

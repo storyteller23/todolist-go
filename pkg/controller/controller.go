@@ -34,10 +34,44 @@ func Delete(id string, db *sql.DB) error {
 	return checkErr(err)
 }
 
-func GetTodoList(db *sql.DB) ([]models.Todo, error) {
+func CompleteTask(id string, db *sql.DB) error {
+	_, err := db.Exec(`
+	UPDATE todos
+	SET completed = ?
+	WHERE id = ?;
+	`, 1, id)
+	return checkErr(err)
+}
+
+func GetUncompletedTasks(db *sql.DB) ([]models.Todo, error) {
 	result := make([]models.Todo, 0)
 
-	rows, err := db.Query(`SELECT * FROM todos`)
+	rows, err := db.Query(`SELECT * FROM todos WHERE completed = ?`, 0)
+	if err != nil {
+		return result, err
+	}
+	var id, completed int
+	var title string
+	for rows.Next() {
+		err = rows.Scan(&id, &title, &completed)
+		if err != nil {
+			return []models.Todo{}, err
+		}
+		todo := models.Todo{
+			Id:        id,
+			Title:     title,
+			Completed: completed,
+		}
+		result = append(result, todo)
+	}
+
+	return result, nil
+}
+
+func GetCompletedTasks(db *sql.DB) ([]models.Todo, error) {
+	result := make([]models.Todo, 0)
+
+	rows, err := db.Query(`SELECT * FROM todos WHERE completed = ?`, 1)
 	if err != nil {
 		return result, err
 	}

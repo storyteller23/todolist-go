@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/storyteller23/todolist-go/pkg/config"
 	"github.com/storyteller23/todolist-go/pkg/controller"
+	"github.com/storyteller23/todolist-go/pkg/models"
 )
 
 var (
@@ -29,11 +30,23 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := controller.GetTodoList(db)
+	uncompleted, err := controller.GetUncompletedTasks(db)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
+
+	completed, err := controller.GetCompletedTasks(db)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.TodoList{
+		CompletedTasks:   completed,
+		UncompletedTasks: uncompleted,
+	}
+
 	tmpl.Execute(w, data)
 }
 
@@ -55,12 +68,23 @@ func AddTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 	params := mux.Vars(r)
 	id := params["id"]
 	controller.Delete(id, db)
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
+
+func CompleteTodo(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	params := mux.Vars(r)
+	id := params["id"]
+	controller.CompleteTask(id, db)
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
