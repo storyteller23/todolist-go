@@ -19,6 +19,18 @@ func CreateTable(db *sql.DB) error {
 	return checkErr(err)
 }
 
+func IsCompleted(id string, db *sql.DB) (bool, error) {
+	rows, err := db.Query(`SELECT completed FROM todos WHERE id = ?`, id)
+	if err != nil {
+		return false, err
+	}
+	defer rows.Close()
+	completed := 0
+	rows.Next()
+	rows.Scan(&completed)
+	return completed == 1, nil
+}
+
 func Add(title string, db *sql.DB) error {
 	_, err := db.Exec(`
 	INSERT INTO todos (title, completed)
@@ -60,6 +72,7 @@ func GetUncompletedTasks(db *sql.DB) ([]models.Todo, error) {
 	if err != nil {
 		return result, err
 	}
+	defer rows.Close()
 	var id, completed int
 	var title string
 	for rows.Next() {
@@ -85,6 +98,7 @@ func GetCompletedTasks(db *sql.DB) ([]models.Todo, error) {
 	if err != nil {
 		return result, err
 	}
+	defer rows.Close()
 	var id, completed int
 	var title string
 	for rows.Next() {

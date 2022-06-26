@@ -95,7 +95,16 @@ func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	}
 	params := mux.Vars(r)
 	id := params["id"]
+	isCompleted, err := controller.IsCompleted(id, db)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
 	controller.Delete(id, db)
+	if isCompleted {
+		http.Redirect(w, r, "/completed", http.StatusMovedPermanently)
+		return
+	}
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
 
